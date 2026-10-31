@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: transactions
+  datasource:
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:transactions}
+    username: ${DATABASE_USER:transactions_usr}
+    password: ${DATABASE_PASSWORD:local_pass}
+  flyway:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

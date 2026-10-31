@@ -1,0 +1,27 @@
+services:
+  postgres:
+    container_name: pg_transactions_case
+    image: 'postgres:18-alpine'
+    restart: on-failure
+    environment:
+      POSTGRES_DB: transactions
+      POSTGRES_USER: transactions_usr
+      POSTGRES_PASSWORD: local_pass
+    ports:
+    - "5432:5432"
+
+  application:
+    container_name: transactions_case
+    build:
+      context: .
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_NAME: transactions
+      DATABASE_PORT: 5432
+      DATABASE_USER: transactions_usr
+      DATABASE_PASSWORD: local_pass
+    ports:
+    - "8080:8080"
+    depends_on:
+    - postgres
+    
