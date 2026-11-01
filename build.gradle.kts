@@ -21,7 +21,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-flyway")
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
   	implementation("org.flywaydb:flyway-database-postgresql")
 
 	compileOnly("org.projectlombok:lombok")
@@ -35,6 +37,7 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
 	testImplementation("org.testcontainers:testcontainers-junit-jupiter")
 	testImplementation("org.testcontainers:testcontainers-postgresql")
+	testImplementation("org.instancio:instancio-junit:6.2.0")
 	testCompileOnly("org.projectlombok:lombok")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 	testAnnotationProcessor("org.projectlombok:lombok")
