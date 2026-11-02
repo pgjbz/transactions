@@ -69,20 +69,33 @@ class AccountControllerIntegrationTest extends AbstractIntegrationTest {
             .exchange()
             .expectStatus().isEqualTo(409)
             .expectBody()
-            .jsonPath("$.message").isEqualTo("Conflict")
+            .jsonPath("$.message").isEqualTo("account with document 00000000191 already exists")
             .jsonPath("$.status").isEqualTo(409)
             .jsonPath("$.path").isEqualTo("/api/v1/accounts");
-        // when(accountService.createAccount(any(Account.class))).thenThrow(DuplicateKeyException.class);
 
-        // mockMvc.perform(post("/v1/accounts")
-        // .contentType(MediaType.APPLICATION_JSON)
-        // .content("""
-        // {"document_number": "00000000191"}
-        // """))
-        // .andExpect(status().isConflict())
-        // .andExpect(jsonPath("$.message").value("Conflict"))
-        // .andExpect(jsonPath("$.status").value(409))
-        // .andExpect(jsonPath("$.path").value("/v1/accounts"));
+    }
 
+    @Test
+    @Sql("classpath:sqls/create_account_fixed_id.sql")
+    void shouldReturnAccountWhenFindById() throws Exception {
+        restTestClient.get()
+            .uri("/v1/accounts/5432")
+            .exchange()
+            .expectStatus().isEqualTo(200)
+            .expectBody()
+            .jsonPath("$.id").isEqualTo(5432)
+            .jsonPath("$.document_number").isEqualTo("00000000191");
+    }
+
+    @Test
+    void shouldReturnNotFoundStatusCodeWhenFindUnexistentAccountWhenFindById() throws Exception {
+        restTestClient.get()
+            .uri("/v1/accounts/55547")
+            .exchange()
+            .expectStatus().isEqualTo(404)
+            .expectBody()
+            .jsonPath("$.path").isEqualTo("/api/v1/accounts/55547")
+            .jsonPath("$.message").isEqualTo("account with id 55547 not found")
+            .jsonPath("$.status").isEqualTo(404);
     }
 }

@@ -41,7 +41,8 @@ public class AccountController {
             @ApiResponse(responseCode = "404", description = "Account not found", content = @Content) })
     @GetMapping(value = "/{accountId}")
     public AccountResponseDTO findAccountById(@PathVariable Long accountId) {
-        return new AccountResponseDTO(accountId, String.valueOf(accountId).repeat(11));
+        final Account account = accountService.findById(accountId);
+        return new AccountResponseDTO(account.getId(), account.getDocument());
     }
 
     @Operation(summary = "Create an account")
