@@ -40,7 +40,7 @@ public class AccountController {
             @ApiResponse(responseCode = "400", description = "Invalid id supplied", content = @Content),
             @ApiResponse(responseCode = "404", description = "Account not found", content = @Content) })
     @GetMapping(value = "/{accountId}")
-    public AccountResponseDTO findAccountById(@PathVariable Long accountId) {
+    public AccountResponseDTO findAccountById(@PathVariable final Long accountId) {
         final Account account = accountService.findById(accountId);
         return new AccountResponseDTO(account.getId(), account.getDocument());
     }
@@ -53,7 +53,7 @@ public class AccountController {
             @ApiResponse(responseCode = "409", description = "Account with given document already exists", content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))) })
     @PostMapping
     public ResponseEntity<AccountResponseDTO> postMethodName(
-            @Valid @RequestBody AccountCreateRequestDTO accountCreate) {
+            @Valid @RequestBody final AccountCreateRequestDTO accountCreate) {
         final Account account = accountService.createAccount(Account.createForDocument(accountCreate.documentNumber()));
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

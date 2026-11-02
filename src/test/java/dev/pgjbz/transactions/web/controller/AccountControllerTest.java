@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,7 +16,6 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import dev.pgjbz.transactions.domain.account.models.Account;
 import dev.pgjbz.transactions.domain.account.services.AccountService;
@@ -45,7 +45,7 @@ class AccountControllerTest {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").value("1"))
             .andExpect(jsonPath("$.document_number").value(VALID_GENERIC_DOCUMENT))
-            .andExpect(MockMvcResultMatchers.header().string("Location", "http://localhost/v1/accounts/1"));
+            .andExpect(header().string("Location", "http://localhost/v1/accounts/1"));
 
     }
 

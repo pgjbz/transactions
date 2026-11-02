@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_CONTENT;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,7 +26,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import dev.pgjbz.transactions.domain.exceptions.BusinessException;
 import dev.pgjbz.transactions.domain.exceptions.DuplicateAccountException;
+import dev.pgjbz.transactions.domain.exceptions.DuplicateTransactionException;
+import dev.pgjbz.transactions.domain.exceptions.InvalidValueException;
 import dev.pgjbz.transactions.domain.exceptions.NotFoundException;
+import dev.pgjbz.transactions.domain.exceptions.UnprocessableException;
 import dev.pgjbz.transactions.web.dto.response.ErrorDetail;
 import dev.pgjbz.transactions.web.dto.response.ErrorResponseDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -55,17 +60,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(status).headers(headers).body(errorResponse);
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    @ResponseStatus(INTERNAL_SERVER_ERROR)
-    public ResponseEntity<ErrorResponseDTO> handleNullPointerException(final NullPointerException ex,
-            final WebRequest request) {
-        log.error("null pointer occurred: {}", ex.getMessage(), ex);
-        final HttpStatus internalServerError = INTERNAL_SERVER_ERROR;
-        final String path = getPath(request);
-        return ResponseEntity.status(internalServerError).body(
-                new ErrorResponseDTO(internalServerError.getReasonPhrase(), path, internalServerError.value(), null));
-    }
-
     @ResponseStatus(CONFLICT)
     @ExceptionHandler(DuplicateKeyException.class)
     public ResponseEntity<ErrorResponseDTO> handleDuplicateKeyException(final DuplicateKeyException ex,
@@ -77,7 +71,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseStatus(CONFLICT)
-    @ExceptionHandler(DuplicateAccountException.class)
+    @ExceptionHandler({ DuplicateAccountException.class, DuplicateTransactionException.class })
     public ResponseEntity<ErrorResponseDTO> conflictHandler(final BusinessException exception,
             final WebRequest request) {
         final HttpStatus conflict = CONFLICT;
@@ -94,6 +88,37 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final String path = getPath(request);
         return ResponseEntity.status(notFound)
                 .body(new ErrorResponseDTO(exception.getMessage(), path, notFound.value(), null));
+    }
+
+    @ResponseStatus(UNPROCESSABLE_CONTENT)
+    @ExceptionHandler({ UnprocessableException.class })
+    public ResponseEntity<ErrorResponseDTO> unprocessableEntity(final UnprocessableException ex,
+            final WebRequest request) {
+        final HttpStatus unprocessableEntity = UNPROCESSABLE_CONTENT;
+        final String path = getPath(request);
+        return ResponseEntity.status(unprocessableEntity)
+                .body(new ErrorResponseDTO(ex.getMessage(), path, unprocessableEntity.value(), null));
+    }
+
+    @ResponseStatus(BAD_REQUEST)
+    @ExceptionHandler({ MissingRequestHeaderException.class, InvalidValueException.class })
+    public ResponseEntity<ErrorResponseDTO> badRequest(final Exception ex,
+            final WebRequest request) {
+        final HttpStatus badRequest = BAD_REQUEST;
+        final String path = getPath(request);
+        return ResponseEntity.status(badRequest)
+                .body(new ErrorResponseDTO(ex.getMessage(), path, badRequest.value(), null));
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ResponseEntity<ErrorResponseDTO> handleNullPointerException(final Exception ex,
+            final WebRequest request) {
+        log.error("unexpected exception occur: {}", ex.getMessage(), ex);
+        final HttpStatus internalServerError = INTERNAL_SERVER_ERROR;
+        final String path = getPath(request);
+        return ResponseEntity.status(internalServerError).body(
+                new ErrorResponseDTO(internalServerError.getReasonPhrase(), path, internalServerError.value(), null));
     }
 
     private static String getPath(final WebRequest request) {
