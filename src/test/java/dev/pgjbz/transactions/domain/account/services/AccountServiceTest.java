@@ -9,6 +9,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.instancio.Instancio;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,7 +78,7 @@ class AccountServiceTest {
     @Test 
     void shouldFindAccountWhenSearchById(final CapturedOutput output) {
         final Account account = Instancio.create(Account.class);
-        when(accountPort.findById(anyLong())).thenReturn(account);
+        when(accountPort.findById(anyLong())).thenReturn(Optional.ofNullable(account));
         assertDoesNotThrow(() -> accountService.findById(1L));
 
         assertTrue(output.getOut().contains("fetch account"));
@@ -86,7 +88,7 @@ class AccountServiceTest {
     @Test 
     void shouldThrowNotFoundWhenFindByIdAndNotExists() {
 
-        when(accountPort.findById(anyLong())).thenThrow(NotFoundException.accountWithId(123L));
+        when(accountPort.findById(anyLong())).thenReturn(Optional.empty());
         assertThrows(NotFoundException.class, () -> accountService.findById(1L));
 
         verify(accountPort).findById(anyLong());

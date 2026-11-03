@@ -7,6 +7,7 @@ import dev.pgjbz.transactions.domain.account.models.Account;
 import dev.pgjbz.transactions.domain.account.ports.AccountRepositoryPort;
 import dev.pgjbz.transactions.domain.exceptions.BusinessException;
 import dev.pgjbz.transactions.domain.exceptions.DuplicateAccountException;
+import dev.pgjbz.transactions.domain.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,7 +39,8 @@ public class AccountService {
         try {
             MDC.put("account_id", String.valueOf(id));
             log.info("fetch account");
-            return accountPort.findById(id);
+            return accountPort.findById(id)
+                    .orElseThrow(() -> NotFoundException.accountWithId(id));
         } catch (final BusinessException ex) {
             log.warn("{}", ex.getMessage(), ex);
             throw ex;

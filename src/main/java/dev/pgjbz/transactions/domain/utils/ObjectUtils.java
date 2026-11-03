@@ -16,11 +16,4 @@ public class ObjectUtils {
         return input;
     }
 
-    public static <T extends Number> T positive(final T input, final String negativeMessage) {
-        final T inputNonNull = required(input, negativeMessage);
-        if(inputNonNull.doubleValue() < 0) {
-            throw new InvalidValueException(negativeMessage);
-        }
-        return inputNonNull;
-    }
 }

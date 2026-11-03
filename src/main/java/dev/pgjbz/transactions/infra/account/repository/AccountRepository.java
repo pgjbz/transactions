@@ -1,5 +1,7 @@
 package dev.pgjbz.transactions.infra.account.repository;
 
+import java.util.Optional;
+
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -9,7 +11,6 @@ import org.springframework.stereotype.Repository;
 import dev.pgjbz.transactions.domain.account.models.Account;
 import dev.pgjbz.transactions.domain.account.ports.AccountRepositoryPort;
 import dev.pgjbz.transactions.domain.exceptions.DuplicateAccountException;
-import dev.pgjbz.transactions.domain.exceptions.NotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -37,7 +38,7 @@ public class AccountRepository implements AccountRepositoryPort {
     }
 
     @Override
-    public Account findById(final Long id) {
+    public Optional<Account> findById(final Long id) {
         return jdbcClient.sql("""
                 select
                     id,
@@ -48,9 +49,7 @@ public class AccountRepository implements AccountRepositoryPort {
                     id = :id
                             """).param("id", id)
                 .query((rs, rowNum) -> new Account(rs.getLong("id"), rs.getString("document_number")))
-                .optional()
-                .orElseThrow(() -> NotFoundException.accountWithId(id));
-
+                .optional();
     }
 
     @Override
