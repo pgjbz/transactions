@@ -18,6 +18,18 @@ services:
     ports:
     - "5432:5432"
 
+  openbserver:
+    container_name: openobserve_case
+    image: public.ecr.aws/zinclabs/openobserve:latest
+    data:
+    - /tmp/opebobs:data
+    environment:
+      ZO_ROOT_USER_EMAIL: "root@example.com" 
+      ZO_ROOT_USER_PASSWORD: "Complexpass#123" 
+      ZO_LOCAL_MODE: true
+    ports:
+    - "5080:5080"
+
   application:
     container_name: transactions_case
     build:
@@ -28,9 +40,16 @@ services:
       DATABASE_PORT: 5432
       DATABASE_USER: transactions_usr
       DATABASE_PASSWORD: local_pass
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      OPENOBSERVE_AUTH_TOKEN: Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM=
+      OTEL_METRICS_URL: http://openbserver:5080/api/pgjbz/v1/metrics
+      OTEL_TRACE_URL: http://openbserver:5080/api/pgjbz/v1/traces
+      OTEL_LOG_URL: http://openbserver:5080/api/pgjbz/v1/logs
     ports:
     - "8080:8080"
     depends_on:
     - postgres
     - redis
+    - openbserver
     
