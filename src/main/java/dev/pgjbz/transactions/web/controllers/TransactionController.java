@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import dev.pgjbz.transactions.domain.transaction.models.Transaction;
 import dev.pgjbz.transactions.domain.transaction.services.TransactionService;
 import dev.pgjbz.transactions.web.dto.request.TransactionCreateRequestDTO;
-import dev.pgjbz.transactions.web.dto.response.AccountResponseDTO;
 import dev.pgjbz.transactions.web.dto.response.TransactionResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

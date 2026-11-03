@@ -2,6 +2,7 @@ package dev.pgjbz.transactions.infra.transaction.repository;
 
 import java.util.UUID;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -41,6 +42,7 @@ public class TransactionRepository implements TransactionRepositoryPort {
     }
 
     @Override
+    @Cacheable(cacheNames = "transactions",unless = "#result == false", key = "'transaction_exists_e2e' + #e2eId")
     public boolean existsByE2eId(final UUID e2eId) {
         return jdbcClient.sql(
                 """

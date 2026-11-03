@@ -2,11 +2,13 @@ package dev.pgjbz.transactions.domain.account.models;
 
 import static dev.pgjbz.transactions.domain.utils.StringUtils.normalizeDocument;
 
+import java.io.Serializable;
+
 import dev.pgjbz.transactions.domain.utils.ObjectUtils;
 import lombok.Getter;
 
 @Getter 
-public class Account {
+public class Account implements Serializable{
 
     private final Long id; 
     private final String document;

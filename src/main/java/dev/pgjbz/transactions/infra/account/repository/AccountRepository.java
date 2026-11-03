@@ -2,6 +2,7 @@ package dev.pgjbz.transactions.infra.account.repository;
 
 import java.util.Optional;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -38,6 +39,7 @@ public class AccountRepository implements AccountRepositoryPort {
     }
 
     @Override
+    @Cacheable(cacheNames = "accounts", unless = "#result == null", key = "'account:' + #id")
     public Optional<Account> findById(final Long id) {
         return jdbcClient.sql("""
                 select
@@ -53,6 +55,7 @@ public class AccountRepository implements AccountRepositoryPort {
     }
 
     @Override
+    @Cacheable(cacheNames = "accounts", unless = "#result == false", key = "'account_document_exists:' + #documentNumber")
     public boolean existsByDocument(final String documentNumber) {
         return jdbcClient.sql("""
                     select
