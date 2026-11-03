@@ -35,7 +35,7 @@ public class TransactionService {
             log.warn("{}", ex.getMessage());
             throw UnprocessableException.withAccountId(transaction.getAccountId());
         } catch (final BusinessException ex) {
-            log.warn("{}", ex.getMessage(), ex);
+            log.warn("{}", ex.getMessage());
             throw ex;
         } catch (final Exception ex) {
             log.error("error when query database: {}", ex.getMessage(), ex);

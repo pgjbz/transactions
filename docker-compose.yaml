@@ -1,7 +1,15 @@
 services:
+
+  redis:
+    container_name: redis_transactions_case
+    image: redis:8.10-alpine
+    restart: on-failure
+    ports:
+    - "6379:6379"
+
   postgres:
     container_name: pg_transactions_case
-    image: 'postgres:18-alpine'
+    image: postgres:18-alpine
     restart: on-failure
     environment:
       POSTGRES_DB: transactions
@@ -24,4 +32,5 @@ services:
     - "8080:8080"
     depends_on:
     - postgres
+    - redis
     

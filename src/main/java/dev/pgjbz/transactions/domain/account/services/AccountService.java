@@ -42,7 +42,7 @@ public class AccountService {
             return accountPort.findById(id)
                     .orElseThrow(() -> NotFoundException.accountWithId(id));
         } catch (final BusinessException ex) {
-            log.warn("{}", ex.getMessage(), ex);
+            log.warn("{}", ex.getMessage());
             throw ex;
         } catch (final Exception ex) {
             log.error("error when query database: {}", ex.getMessage(), ex);
