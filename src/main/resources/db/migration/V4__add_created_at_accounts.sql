@@ -1,0 +1,1 @@
+alter table accounts add column created_at timestamp default current_timestamp;

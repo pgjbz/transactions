@@ -6,12 +6,14 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.stereotype.Repository;
 
 import dev.pgjbz.transactions.domain.exceptions.DuplicateTransactionException;
 import dev.pgjbz.transactions.domain.transaction.models.Transaction;
 import dev.pgjbz.transactions.domain.transaction.ports.TransactionRepositoryPort;
 import lombok.RequiredArgsConstructor;
 
+@Repository 
 @RequiredArgsConstructor
 public class TransactionRepository implements TransactionRepositoryPort {
 

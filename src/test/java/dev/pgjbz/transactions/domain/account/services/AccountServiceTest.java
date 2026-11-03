@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.instancio.Instancio;
@@ -15,11 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
-import org.springframework.dao.DuplicateKeyException;
 
 import dev.pgjbz.transactions.domain.account.models.Account;
 import dev.pgjbz.transactions.domain.account.ports.AccountRepositoryPort;
 import dev.pgjbz.transactions.domain.exceptions.DuplicateAccountException;
+import dev.pgjbz.transactions.domain.exceptions.NotFoundException;
 
 @ExtendWith({ MockitoExtension.class, OutputCaptureExtension.class })
 class AccountServiceTest {
@@ -38,6 +40,9 @@ class AccountServiceTest {
         assertDoesNotThrow(() -> accountService.createAccount(account));
 
         assertTrue(output.getOut().contains("creating new account"));
+
+        verify(accountPort).existsByDocument(anyString());
+        verify(accountPort).save(account);
     }
 
     @Test
@@ -50,6 +55,8 @@ class AccountServiceTest {
         assertTrue(output.getOut().contains("creating new account"));
         assertTrue(output.getOut().contains("error when create an account"));
 
+        verify(accountPort).existsByDocument(anyString());
+        verify(accountPort).save(account);
     }
 
      @Test
@@ -62,6 +69,8 @@ class AccountServiceTest {
         assertTrue(output.getOut().contains("creating new account"));
         assertTrue(output.getOut().contains("error when create an account"));
 
+        verify(accountPort).existsByDocument(anyString());
+        verify(accountPort, never()).save(account);
     }
 
     @Test 
@@ -71,5 +80,16 @@ class AccountServiceTest {
         assertDoesNotThrow(() -> accountService.findById(1L));
 
         assertTrue(output.getOut().contains("fetch account"));
+        verify(accountPort).findById(anyLong());
+    }
+
+    @Test 
+    void shouldThrowNotFoundWhenFindByIdAndNotExists() {
+
+        when(accountPort.findById(anyLong())).thenThrow(NotFoundException.accountWithId(123L));
+        assertThrows(NotFoundException.class, () -> accountService.findById(1L));
+
+        verify(accountPort).findById(anyLong());
+        
     }
 }

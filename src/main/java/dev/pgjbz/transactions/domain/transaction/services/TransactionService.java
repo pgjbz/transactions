@@ -1,6 +1,7 @@
 package dev.pgjbz.transactions.domain.transaction.services;
 
 import org.slf4j.MDC;
+import org.springframework.stereotype.Service;
 
 import dev.pgjbz.transactions.domain.account.services.AccountService;
 import dev.pgjbz.transactions.domain.exceptions.BusinessException;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Service 
 @RequiredArgsConstructor
 public class TransactionService {
 
