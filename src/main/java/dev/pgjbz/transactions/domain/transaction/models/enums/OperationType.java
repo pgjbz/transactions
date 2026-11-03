@@ -1,5 +1,6 @@
 package dev.pgjbz.transactions.domain.transaction.models.enums;
 
+import static java.math.RoundingMode.HALF_DOWN;
 import static java.util.Objects.isNull;
 import static lombok.AccessLevel.PRIVATE;
 
@@ -31,10 +32,11 @@ public enum OperationType {
         if(isNull(input)) {
             return input;
         }
-        return switch(this) {
+        final BigDecimal normalized = switch(this) {
             case NORMAL_PURCHASE, PURCHASE_WITH_INSTALLMENTS, WITHDRAWAL -> input.abs().negate();
             case CREDIT_VOUCHER -> input.abs();
         };
+        return normalized.setScale(2, HALF_DOWN);
     }
 
 }

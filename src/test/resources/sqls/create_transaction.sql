@@ -1,0 +1,2 @@
+insert into transactions(account_id, operation_type, amount, event_date, transaction_e2e_id)
+        values (5432, 1, -10.00, current_timestamp, '8841cd3f-ca5d-448f-ba91-f8391bded498') on conflict do nothing;

@@ -29,7 +29,7 @@ public class Transaction {
         this.id = null;
         this.accountId = required(accountId, "Account id is mandatory");
         this.operationType = OperationType.fromInternalId(required(operationTypeId, "Operation type id is mandatory"));
-        this.amount = this.operationType.normalizeAmount(positive(amount, "Amount must be positive value"));
+        this.amount = this.operationType.normalizeAmount(required(amount, "Amount is required"));
         this.transactionE2eId = required(transactionE2eId, "Transaction e2e id is mandatory");
         this.createdAt = LocalDateTime.now();
     }

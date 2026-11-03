@@ -13,7 +13,7 @@ import dev.pgjbz.transactions.domain.transaction.models.Transaction;
 import dev.pgjbz.transactions.domain.transaction.ports.TransactionRepositoryPort;
 import lombok.RequiredArgsConstructor;
 
-@Repository 
+@Repository
 @RequiredArgsConstructor
 public class TransactionRepository implements TransactionRepositoryPort {
 
@@ -24,12 +24,14 @@ public class TransactionRepository implements TransactionRepositoryPort {
         try {
             final KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcClient.sql("""
-                    insert into transactions(account_id, operation_type, amount, event_dat, transaction_e2e_id)
+                    insert into transactions(account_id, operation_type, amount, event_date, transaction_e2e_id)
                     values (:accountId, :operationType, :amount, :eventDate, :e2eId)
+                    returning id
                     """)
                     .param("accountId", transaction.getAccountId())
                     .param("operationType", transaction.getOperationType().getInternalId())
                     .param("amount", transaction.getAmount())
+                    .param("eventDate", transaction.getCreatedAt())
                     .param("e2eId", transaction.getTransactionE2eId())
                     .update(keyHolder);
             return transaction.withId(keyHolder.getKeyAs(Long.class));
