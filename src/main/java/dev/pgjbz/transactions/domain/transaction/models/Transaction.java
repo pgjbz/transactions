@@ -1,6 +1,5 @@
 package dev.pgjbz.transactions.domain.transaction.models;
 
-import static dev.pgjbz.transactions.domain.utils.ObjectUtils.positive;
 import static dev.pgjbz.transactions.domain.utils.ObjectUtils.required;
 import static lombok.AccessLevel.PRIVATE;
 

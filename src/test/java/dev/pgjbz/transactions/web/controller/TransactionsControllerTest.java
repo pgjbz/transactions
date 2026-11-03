@@ -26,10 +26,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import dev.pgjbz.transactions.domain.exceptions.UnprocessableException;
 import dev.pgjbz.transactions.domain.transaction.models.Transaction;
 import dev.pgjbz.transactions.domain.transaction.services.TransactionService;
-import dev.pgjbz.transactions.web.controllers.TransactionsController;
+import dev.pgjbz.transactions.web.controllers.TransactionController;
 
 @AutoConfigureMockMvc
-@WebMvcTest(TransactionsController.class)
+@WebMvcTest(TransactionController.class)
 class TransactionsControllerTest {
 
     @Autowired

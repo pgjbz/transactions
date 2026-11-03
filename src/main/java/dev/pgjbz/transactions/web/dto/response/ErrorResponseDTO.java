@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record ErrorResponseDTO(
     @Schema(description = "error message", example = "Not found")
     String message,
-    @Schema(description = "path of request", example = "/api/v1/accounts")
+    @Schema(description = "path of request", example = "/accounts")
     String path,
     @Schema(description = "http status code", example = "400")
     int status,
