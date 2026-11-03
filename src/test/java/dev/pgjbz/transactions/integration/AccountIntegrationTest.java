@@ -26,6 +26,8 @@ import dev.pgjbz.transactions.web.dto.request.AccountCreateRequestDTO;
 @AutoConfigureRestTestClient
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class AccountIntegrationTest extends AbstractIntegrationTest {
+    private static final String ACCOUNTS_BASE_PATH = "/accounts";
+
     private static final String INVALID_DOCUMENT = "11477444114";
 
     private static final String VALID_GENERIC_DOCUMENT = "00000000191";
@@ -45,7 +47,7 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
         final AccountCreateRequestDTO request = new AccountCreateRequestDTO(VALID_GENERIC_DOCUMENT);
 
         restTestClient.post()
-                .uri("/v1/accounts")
+                .uri(ACCOUNTS_BASE_PATH)
                 .body(request)
                 .header("Content-type", "application/json")
                 .exchange()
@@ -66,7 +68,7 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
         final AccountCreateRequestDTO request = new AccountCreateRequestDTO(INVALID_DOCUMENT);
 
         restTestClient.post()
-                .uri("/v1/accounts")
+                .uri(ACCOUNTS_BASE_PATH)
                 .body(request)
                 .header("Content-type", "application/json")
                 .exchange()
@@ -74,7 +76,7 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
                 .expectBody()
                 .jsonPath("$.message").isEqualTo("invalid request")
                 .jsonPath("$.status").isEqualTo(400)
-                .jsonPath("$.path").isEqualTo("/api/v1/accounts")
+                .jsonPath("$.path").isEqualTo(ACCOUNTS_BASE_PATH)
                 .jsonPath("$.errors[0].field").isEqualTo("documentNumber")
                 .jsonPath("$.errors[0].message").isEqualTo("Document must be a valid CPF");
 
@@ -93,7 +95,7 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
         final AccountCreateRequestDTO request = new AccountCreateRequestDTO(VALID_GENERIC_DOCUMENT);
 
         restTestClient.post()
-                .uri("/v1/accounts")
+                .uri(ACCOUNTS_BASE_PATH)
                 .body(request)
                 .header("Content-type", "application/json")
                 .exchange()
@@ -101,7 +103,7 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
                 .expectBody()
                 .jsonPath("$.message").isEqualTo("account with document 00000000191 already exists")
                 .jsonPath("$.status").isEqualTo(409)
-                .jsonPath("$.path").isEqualTo("/api/v1/accounts");
+                .jsonPath("$.path").isEqualTo(ACCOUNTS_BASE_PATH);
 
         verify(accountService).createAccount(any(Account.class));
         verify(accountRepository).existsByDocument(VALID_GENERIC_DOCUMENT);
@@ -113,7 +115,7 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
     @Sql("classpath:sqls/create_account_fixed_id.sql")
     void shouldReturnAccountWhenFindById() throws Exception {
         restTestClient.get()
-                .uri("/v1/accounts/5432")
+                .uri(ACCOUNTS_BASE_PATH + "/5432")
                 .exchange()
                 .expectStatus().isEqualTo(200)
                 .expectBody()
@@ -129,11 +131,11 @@ class AccountIntegrationTest extends AbstractIntegrationTest {
     @Test
     void shouldReturnNotFoundStatusCodeWhenFindUnexistentAccountWhenFindById() throws Exception {
         restTestClient.get()
-                .uri("/v1/accounts/55547")
+                .uri(ACCOUNTS_BASE_PATH + "/55547")
                 .exchange()
                 .expectStatus().isEqualTo(404)
                 .expectBody()
-                .jsonPath("$.path").isEqualTo("/api/v1/accounts/55547")
+                .jsonPath("$.path").isEqualTo(ACCOUNTS_BASE_PATH + "/55547")
                 .jsonPath("$.message").isEqualTo("account with id 55547 not found")
                 .jsonPath("$.status").isEqualTo(404);
 

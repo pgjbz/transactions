@@ -26,6 +26,8 @@ import dev.pgjbz.transactions.web.controllers.AccountController;
 @AutoConfigureMockMvc
 @WebMvcTest(AccountController.class)
 class AccountControllerTest {
+    private static final String ACCOUNT_BASE_PATH = "/accounts";
+
     private static final String VALID_GENERIC_DOCUMENT = "00000000191";
 
     @Autowired
@@ -37,7 +39,7 @@ class AccountControllerTest {
     @Test
     void shouldCreateAnAccountAndReturnBodyWithHeadersWithLocationAndReturnCreatedHttpStatus() throws Exception {
         when(accountService.createAccount(any(Account.class))).thenReturn(new Account(1L, VALID_GENERIC_DOCUMENT));
-        mockMvc.perform(post("/v1/accounts")
+        mockMvc.perform(post(ACCOUNT_BASE_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                     {"document_number": "00000000191"}
@@ -45,13 +47,13 @@ class AccountControllerTest {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").value("1"))
             .andExpect(jsonPath("$.document_number").value(VALID_GENERIC_DOCUMENT))
-            .andExpect(header().string("Location", "http://localhost/v1/accounts/1"));
+            .andExpect(header().string("Location", "http://localhost" +  ACCOUNT_BASE_PATH + "/1"));
 
     }
 
     @Test
     void shouldNotCreateAnAccountWhenGivenDocumentIsInvalid() throws Exception {
-        mockMvc.perform(post("/v1/accounts")
+        mockMvc.perform(post(ACCOUNT_BASE_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                 {"document_number": "00000000192"}
@@ -59,7 +61,7 @@ class AccountControllerTest {
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.message").value("invalid request"))
             .andExpect(jsonPath("$.status").value(400))
-            .andExpect(jsonPath("$.path").value("/v1/accounts"))
+            .andExpect(jsonPath("$.path").value(ACCOUNT_BASE_PATH))
             .andExpect(jsonPath("$.errors[0].field").value("documentNumber"))
             .andExpect(jsonPath("$.errors[0].message").value("Document must be a valid CPF"));
     }
@@ -68,7 +70,7 @@ class AccountControllerTest {
     void shoouldReturnConflictStatusCodeWhenAlreadyExistsAnAccountWithDocument() throws Exception {
         when(accountService.createAccount(any(Account.class))).thenThrow(DuplicateAccountException.withDocumentNumber(VALID_GENERIC_DOCUMENT));
 
-        mockMvc.perform(post("/v1/accounts")
+        mockMvc.perform(post(ACCOUNT_BASE_PATH)
             .contentType(MediaType.APPLICATION_JSON)
             .content("""
                     {"document_number": "00000000191"}
@@ -76,7 +78,7 @@ class AccountControllerTest {
             .andExpect(status().isConflict())
             .andExpect(jsonPath("$.message").value("account with document 00000000191 already exists"))
             .andExpect(jsonPath("$.status").value(409))
-            .andExpect(jsonPath("$.path").value("/v1/accounts"));
+            .andExpect(jsonPath("$.path").value(ACCOUNT_BASE_PATH));
 
     }
 
@@ -88,7 +90,7 @@ class AccountControllerTest {
 
         when(accountService.findById(account.getId())).thenReturn(account);
 
-        mockMvc.perform(get("/v1/accounts/5432"))
+        mockMvc.perform(get(ACCOUNT_BASE_PATH + "/5432"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(5432))
             .andExpect(jsonPath("document_number").value(VALID_GENERIC_DOCUMENT));
@@ -99,11 +101,11 @@ class AccountControllerTest {
     void shouldReturnNotFoundStatusCodeWhenFindUnexistentAccountWhenFindById() throws Exception {
         when(accountService.findById(anyLong())).thenThrow(NotFoundException.accountWithId(5432L));
 
-        mockMvc.perform(get("/v1/accounts/5432"))
+        mockMvc.perform(get(ACCOUNT_BASE_PATH + "/5432"))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.message").value("account with id 5432 not found"))
             .andExpect(jsonPath("$.status").value(404))
-            .andExpect(jsonPath("$.path").value("/v1/accounts/5432"));
+            .andExpect(jsonPath("$.path").value(ACCOUNT_BASE_PATH + "/5432"));
 
     }
 }

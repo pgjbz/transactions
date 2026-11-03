@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "/v1/accounts")
+@RequestMapping(value = "/accounts")
 @Tag(name = "accounts", description = "Account Operations")
 public class AccountController {
 
