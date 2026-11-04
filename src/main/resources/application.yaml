@@ -55,8 +55,9 @@ management:
           endpoint: ${OTEL_LOG_URL:http://localhost:5080/api/pgjbz/v1/logs}
           headers:
             Authorization: ${OTEL_AUTH_TOKEN}
-
+            stream-name: "transactions"
 logging:
+  include-application-name: true
   structured:
     format:
-      console: logstash
+      console: ecs

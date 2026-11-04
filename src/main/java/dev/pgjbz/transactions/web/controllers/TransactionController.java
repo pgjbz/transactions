@@ -16,6 +16,7 @@ import dev.pgjbz.transactions.domain.transaction.models.Transaction;
 import dev.pgjbz.transactions.domain.transaction.services.TransactionService;
 import dev.pgjbz.transactions.web.dto.request.TransactionCreateRequestDTO;
 import dev.pgjbz.transactions.web.dto.response.TransactionResponseDTO;
+import io.micrometer.observation.annotation.Observed;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,6 +43,7 @@ public class TransactionController {
             @ApiResponse(responseCode = "422", description = "Invalid account id", content = @Content),
          })
     @PostMapping
+    @Observed(name = "transaction.count")
     public ResponseEntity<TransactionResponseDTO> createTransaction(
             @RequestBody @Valid final TransactionCreateRequestDTO transactionCreateRequestDTO,
             @Schema(name = "transaction-e2e-id", description = "unique transaction id", requiredMode = REQUIRED) 

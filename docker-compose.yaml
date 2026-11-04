@@ -17,16 +17,20 @@ services:
       POSTGRES_PASSWORD: local_pass
     ports:
     - "5432:5432"
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+
 
   openbserver:
     container_name: openobserve_case
     image: public.ecr.aws/zinclabs/openobserve:latest
-    data:
-    - /tmp/opebobs:data
+    volumes:
+    - openobserve:/data
     environment:
       ZO_ROOT_USER_EMAIL: "root@example.com" 
       ZO_ROOT_USER_PASSWORD: "Complexpass#123" 
       ZO_LOCAL_MODE: true
+      ZO_CREATE_ORG_THROUGH_INGESTION: true
     ports:
     - "5080:5080"
 
@@ -53,3 +57,7 @@ services:
     - redis
     - openbserver
     
+
+volumes:
+  pgdata:
+  openobserve:
