@@ -27,10 +27,10 @@ This installs the Java and Gradle versions declared in `mise.toml`.
 
 ## Run
 
-Start the database:
+Start the infrastructure (PostgreSQL, Redis and OpenObserve):
 
 ```sh
-docker compose up -d postgres
+docker compose up -d postgres redis openbserver
 ```
 
 Start the application:
@@ -39,7 +39,14 @@ Start the application:
 ./gradlew bootRun
 ```
 
-The service listens on `http://localhost:8080` and exposes the health endpoint at `http://localhost:8080/actuator/health`.
+The service listens on `http://localhost:8080` and exposes:
+
+| Endpoint | URL |
+| --- | --- |
+| Swagger UI | `http://localhost:8080/swagger` |
+| OpenAPI JSON | `http://localhost:8080/api-docs` |
+| Health | `http://localhost:8080/actuator/health` |
+| OpenObserve UI | `http://localhost:5080` |
 
 Configuration is read from the following environment variables (defaults in parentheses):
 
@@ -50,6 +57,53 @@ Configuration is read from the following environment variables (defaults in pare
 | `DATABASE_NAME` | `transactions` |
 | `DATABASE_USER` | `transactions_usr` |
 | `DATABASE_PASSWORD` | `local_pass` |
+| `REDIS_HOST` | `localhost` |
+| `REDIS_PORT` | `6379` |
+| `OTEL_AUTH_TOKEN` | _empty_ |
+| `OTEL_METRICS_URL` | `http://localhost:5080/api/pgjbz/v1/metrics` |
+| `OTEL_TRACE_URL` | `http://localhost:5080/api/pgjbz/v1/traces` |
+| `OTEL_LOG_URL` | `http://localhost:5080/api/pgjbz/v1/logs` |
+
+## API documentation (Swagger)
+
+The API is documented with [springdoc-openapi](https://springdoc.org/) and exposed through Swagger UI:
+
+- Swagger UI: `http://localhost:8080/swagger`
+- OpenAPI specification (JSON): `http://localhost:8080/api-docs`
+
+Use the Swagger UI to browse the available endpoints and try requests directly from the browser.
+
+## Observability with OpenObserve
+
+[OpenObserve](https://openobserve.ai/) runs as the `openbserver` service in [`docker-compose.yaml`](docker-compose.yaml) and receives the application's metrics, traces and logs via OpenTelemetry (OTLP).
+
+Start it with:
+
+```sh
+docker compose up -d openbserver
+```
+
+Then open the UI in your browser at `http://localhost:5080` and sign in with the local development credentials:
+
+| Field | Value |
+| --- | --- |
+| Email | `root@example.com` |
+| Password | `Complexpass#123` |
+
+The data is organized in the `pgjbz` organization:
+
+- Metrics: `http://localhost:5080/api/pgjbz/v1/metrics`
+- Traces: `http://localhost:5080/api/pgjbz/v1/traces`
+- Logs: `http://localhost:5080/api/pgjbz/v1/logs` (stream `transactions`)
+
+When running the application outside Docker, export `OTEL_AUTH_TOKEN` so the OTLP exporters can authenticate against the local OpenObserve instance:
+
+```sh
+export OTEL_AUTH_TOKEN="Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM="
+./gradlew bootRun
+```
+
+From the OpenObserve UI, use the **Streams** page to explore logs and traces, and **Dashboards** to build panels over the collected metrics.
 
 ## Test
 
@@ -95,8 +149,15 @@ docker run --rm -p 8080:8080 \
 
 ## Run with Docker Compose
 
-`docker-compose.yaml` starts PostgreSQL and builds/runs the application image:
+`docker-compose.yaml` starts PostgreSQL, Redis and OpenObserve, then builds/runs the application image:
 
 ```sh
 docker compose -f docker-compose.yaml up --build
 ```
+
+Once the stack is up:
+
+- Application: `http://localhost:8080`
+- Swagger UI: `http://localhost:8080/swagger`
+- OpenAPI JSON: `http://localhost:8080/api-docs`
+- OpenObserve UI: `http://localhost:5080` (`root@example.com` / `Complexpass#123`)

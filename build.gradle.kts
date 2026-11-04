@@ -29,11 +29,11 @@ dependencies {
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.2.0")
   	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0:2.26.1-alpha")
-	
+	implementation("org.postgresql:postgresql")
+	implementation("net.ttddyy.observation:datasource-micrometer-spring-boot:2.3.0")
 
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jdbc-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
