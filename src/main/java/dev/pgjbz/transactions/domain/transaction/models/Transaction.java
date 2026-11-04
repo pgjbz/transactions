@@ -5,6 +5,7 @@ import static lombok.AccessLevel.PRIVATE;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 import dev.pgjbz.transactions.domain.transaction.models.enums.OperationType;
@@ -30,7 +31,7 @@ public class Transaction {
         this.operationType = OperationType.fromInternalId(required(operationTypeId, "Operation type id is mandatory"));
         this.amount = this.operationType.normalizeAmount(required(amount, "Amount is required"));
         this.transactionE2eId = required(transactionE2eId, "Transaction e2e id is mandatory");
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneOffset.UTC);
     }
-
+ 
 }

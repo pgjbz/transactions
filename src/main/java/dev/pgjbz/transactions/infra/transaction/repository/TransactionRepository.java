@@ -36,7 +36,7 @@ public class TransactionRepository implements TransactionRepositoryPort {
                     .param("e2eId", transaction.getTransactionE2eId())
                     .update(keyHolder);
             return transaction.withId(keyHolder.getKeyAs(Long.class));
-        } catch (final DuplicateKeyException ex) {
+        } catch (final DuplicateKeyException _) {
             throw DuplicateTransactionException.withE2eId(transaction.getTransactionE2eId());
         }
     }

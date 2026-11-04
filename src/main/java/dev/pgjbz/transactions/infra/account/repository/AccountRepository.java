@@ -33,7 +33,7 @@ public class AccountRepository implements AccountRepositoryPort {
                     .param("documentNumber", document)
                     .update(keyHolder);
             return new Account(keyHolder.getKeyAs(Long.class), document);
-        } catch (final DuplicateKeyException ex) {
+        } catch (final DuplicateKeyException _) {
             throw DuplicateAccountException.withDocumentNumber(account.getDocument());
         }
     }

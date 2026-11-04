@@ -17,9 +17,9 @@ public enum OperationType {
     CREDIT_VOUCHER(4);
 
     @Getter
-    private final Integer internalId;
+    private final int internalId;
 
-    public static OperationType fromInternalId(Integer operationTypeId) {
+    public static OperationType fromInternalId(int operationTypeId) {
         for(final OperationType operation: values()) {
             if(operation.internalId == operationTypeId) {
                 return operation;
