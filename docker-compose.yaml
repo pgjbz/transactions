@@ -46,7 +46,7 @@ services:
       DATABASE_PASSWORD: local_pass
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      OPENOBSERVE_AUTH_TOKEN: Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM=
+      OTEL_AUTH_TOKEN: "Basic cm9vdEBleGFtcGxlLmNvbTpDb21wbGV4cGFzcyMxMjM="
       OTEL_METRICS_URL: http://openbserver:5080/api/pgjbz/v1/metrics
       OTEL_TRACE_URL: http://openbserver:5080/api/pgjbz/v1/traces
       OTEL_LOG_URL: http://openbserver:5080/api/pgjbz/v1/logs
